@@ -16,3 +16,17 @@
 - 👤 [Explore the creator's projects](https://go.ondev.store/aviantho6-del).
 - 🌍 [Create with OMGithub](https://go.ondev.store/).
 <!-- omgithub:readme:end -->
+
+## Entre luces
+
+Una pequeña aventura narrativa 3D en español: explora un jardín nocturno, conoce a Alex y construye una conexión a tu propio ritmo. Los personajes son adultos; la intimidad se sugiere sin mostrar contenido explícito y cada paso respeta el consentimiento.
+
+### Cómo jugar
+
+- Muévete con **WASD** o las flechas; en móvil, usa el pad táctil.
+- Acércate a Alex y pulsa **E** (o el botón **E** en móvil) para conversar.
+- Elige respuestas, invita a bailar y decide cómo termina la noche. Puedes cerrar cualquier conversación cuando quieras.
+- El botón de nota musical activa una suave banda sonora ambiental.
+
+Abre `index.html` en un servidor web local o en el navegador. Three.js se carga desde jsDelivr.
+
