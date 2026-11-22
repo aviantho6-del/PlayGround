@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#101210">
+<title>ÚLTIMO VAGÓN — Tomas contra la noche</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+:root{--paper:#e9e3d3;--muted:#a19b8d;--red:#d94b37;--gold:#ffb54a;--ink:#111311}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101210;color:var(--paper);font-family:'Barlow Condensed',sans-serif}canvas{display:block;position:fixed;inset:0;touch-action:none}
+#vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 48%,transparent 42%,rgba(0,0,0,.26) 76%,rgba(0,0,0,.8) 130%);z-index:2}
+#grain{position:fixed;inset:-50%;width:200%;height:200%;opacity:.06;pointer-events:none;z-index:3;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");animation:grain .22s steps(2) infinite}@keyframes grain{0%{transform:translate(0,0)}100%{transform:translate(-3%,2%)}}
+#hud{position:fixed;inset:0;z-index:4;pointer-events:none;display:none}.topline{position:absolute;top:24px;left:30px;right:30px;display:flex;justify-content:space-between;align-items:flex-start}.brand{font-size:13px;font-weight:800;letter-spacing:.28em;color:#e3ddcf}.brand span{color:var(--red)}.route{font:10px 'DM Mono',monospace;letter-spacing:.12em;color:#aaa395;margin-top:6px}.stats{display:flex;gap:26px;text-align:right}.stat-label{font:9px 'DM Mono',monospace;letter-spacing:.14em;color:#aca598}.stat-value{font-size:25px;font-weight:700;line-height:1}.bottom{position:absolute;left:30px;bottom:25px;display:flex;align-items:end;gap:20px}.health-wrap{width:205px}.health-caption{display:flex;justify-content:space-between;font:10px 'DM Mono',monospace;letter-spacing:.1em;margin-bottom:8px}.health-track{height:5px;background:#ffffff25;width:100%}.health-fill{height:100%;width:100%;background:var(--red);transition:width .2s}.souls{display:flex;gap:5px;margin-bottom:1px}.soul-icon{width:15px;height:20px;background:radial-gradient(ellipse at 50% 65%,#fff5b4 0,#ffb04d 28%,#ed522b 55%,transparent 72%);filter:drop-shadow(0 0 6px #ff6a30)}.prompt{position:absolute;bottom:27px;right:30px;text-align:right;font:10px 'DM Mono',monospace;letter-spacing:.09em;color:#b8b2a5}.prompt b{color:#fff}.crosshair{position:absolute;left:50%;top:50%;width:18px;height:18px;transform:translate(-50%,-50%);opacity:.8}.crosshair:before,.crosshair:after{content:'';position:absolute;background:#fff}.crosshair:before{width:1px;height:18px;left:8px}.crosshair:after{height:1px;width:18px;top:8px}.hitmarker{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:30px;color:#ffebe1;opacity:0;transition:opacity .1s;text-shadow:0 0 8px #f43}.hitmarker.show{opacity:1}.toast{position:absolute;top:19%;left:50%;transform:translateX(-50%);font:11px 'DM Mono',monospace;letter-spacing:.22em;color:#ffc173;text-shadow:0 2px 14px #000;white-space:nowrap;opacity:0;transition:opacity .4s}.toast.show{opacity:1}
+.screen{position:fixed;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,rgba(8,10,9,.9),rgba(8,10,9,.48) 56%,rgba(8,10,9,.64)),radial-gradient(ellipse at 75% 48%,#603a2540,transparent 55%);padding:24px}.card{width:min(540px,100%);margin-right:auto;margin-left:8vw}.eyebrow{font:10px 'DM Mono',monospace;color:#e68b51;letter-spacing:.25em;text-transform:uppercase;display:flex;gap:10px;align-items:center}.eyebrow:before{content:'';height:1px;width:28px;background:var(--red)}h1{font-size:clamp(58px,9vw,112px);line-height:.77;letter-spacing:-.04em;margin:19px 0 20px;font-weight:900;text-transform:uppercase;color:#eee9db;text-shadow:0 8px 40px #000}.title-red{color:var(--red)}.subtitle{font-size:19px;font-weight:500;letter-spacing:.03em;color:#d0c8b7}.desc{max-width:390px;color:#aaa79d;font-size:15px;line-height:1.55;margin:22px 0 25px}.desc strong{color:#e8dfcb}.meta{display:flex;gap:22px;margin-bottom:26px;font:9px 'DM Mono',monospace;letter-spacing:.12em;color:#77766e}.meta span:before{content:'●';color:#b34837;margin-right:7px}.start{border:0;background:#d54c38;color:#fff4e8;font:700 15px 'Barlow Condensed',sans-serif;letter-spacing:.17em;padding:15px 26px;min-width:190px;cursor:pointer;transition:background .2s,transform .2s;text-transform:uppercase;box-shadow:0 6px 25px #bf362b33}.start:hover{background:#ef674e;transform:translateY(-2px)}.controls{margin-top:19px;color:#817f75;font:9px 'DM Mono',monospace;line-height:1.9;letter-spacing:.05em}.controls b{color:#c6c1b2;font-weight:400}.peru{position:fixed;right:8vw;bottom:34px;font:9px 'DM Mono',monospace;letter-spacing:.15em;color:#99958a;z-index:1}.flag{display:inline-flex;width:24px;height:15px;margin-right:8px;vertical-align:middle;border-left:8px solid #d73939;border-right:8px solid #d73939;background:#eee}.tagline{position:fixed;right:8vw;top:34px;font:9px 'DM Mono',monospace;letter-spacing:.18em;color:#aaa49a;z-index:1;writing-mode:vertical-rl}.gameover .card{margin:auto;text-align:center}.gameover h1{font-size:clamp(55px,9vw,92px)}.gameover .desc{margin-left:auto;margin-right:auto}.gameover .meta{justify-content:center}.mobile-controls{display:none;position:absolute;inset:0;pointer-events:none}.stick{pointer-events:auto;position:absolute;left:22px;bottom:25px;width:118px;height:118px;border:1px solid #ffffff44;border-radius:50%;background:#0003;touch-action:none}.nub{position:absolute;width:43px;height:43px;background:#ddd5c644;border:1px solid #eee8d655;border-radius:50%;left:37px;top:37px}.attack-touch{pointer-events:auto;position:absolute;right:23px;bottom:37px;width:76px;height:76px;border-radius:50%;background:#bd4839aa;border:1px solid #ffb59b99;color:#fff;font:700 11px 'DM Mono',monospace;letter-spacing:.08em;touch-action:none}.damage-flash{position:fixed;inset:0;z-index:3;pointer-events:none;background:radial-gradient(ellipse,transparent 32%,#c4141688 100%);opacity:0;transition:opacity .18s}.damage-flash.active{opacity:1}
+@media(max-width:700px){.card{margin-left:3vw}.topline{top:16px;left:16px;right:16px}.bottom{left:16px;bottom:17px}.prompt{display:none}.stats{gap:14px}.stat-value{font-size:21px}.health-wrap{width:150px}.screen{padding:22px}.tagline{right:13px;top:28px;font-size:8px}.peru{right:18px;bottom:19px}.desc{font-size:14px}.controls{max-width:275px}.mobile-controls{display:block}}
+</style>
+</head>
+<body>
+<div id="vignette"></div><div id="grain"></div><div class="damage-flash" id="damageFlash"></div>
+<div id="hud"><div class="topline"><div><div class="brand">ÚLTIMO <span>VAGÓN</span></div><div class="route">LÍNEA 01 · LIMA — SIN DESTINO</div></div><div class="stats"><div><div class="stat-label">OLEADA</div><div class="stat-value" id="wave">01</div></div><div><div class="stat-label">ELIMINADOS</div><div class="stat-value" id="kills">00</div></div><div><div class="stat-label">TIEMPO</div><div class="stat-value" id="clock">00:00</div></div></div></div><div class="crosshair"></div><div class="hitmarker" id="hitmarker">×</div><div class="toast" id="toast">DOS ALMAS TE PROTEGEN</div><div class="bottom"><div class="health-wrap"><div class="health-caption"><span>TOMÁS · SALUD</span><span id="healthNum">100</span></div><div class="health-track"><div class="health-fill" id="healthFill"></div></div></div><div class="souls"><i class="soul-icon"></i><i class="soul-icon"></i></div></div><div class="prompt"><b>[WASD]</b> MOVER &nbsp; <b>[RATÓN]</b> MIRAR &nbsp; <b>[ESPACIO / CLICK]</b> CUCHILLO</div><div class="mobile-controls"><div class="stick" id="stick"><div class="nub" id="nub"></div></div><button class="attack-touch" id="attackTouch">CUCHILLO</button></div></div>
+<div class="screen" id="intro"><div class="card"><div class="eyebrow">Sobrevive al último viaje</div><h1>ÚLTIMO<br><span class="title-red">VAGÓN</span></h1><div class="subtitle">Lima, 02:17 a. m. El tren no se detiene.</div><p class="desc">Tomás solo tiene su cuchillo y <strong>dos almas de fuego</strong> que lo siguen desde el túnel. Algo subió en la última estación. No hay salida. Aguanta cuanto puedas.</p><div class="meta"><span>SUPERVIVENCIA</span><span>OLEADAS INFINITAS</span><span>EN SOLITARIO</span></div><button class="start" id="startBtn">SUBIR AL TREN&nbsp; →</button><div class="controls"><b>W A S D</b> moverse &nbsp;·&nbsp; <b>RATÓN</b> mirar &nbsp;·&nbsp; <b>CLICK / ESPACIO</b> acuchillar<br>En móvil: arrastra el lado izquierdo y pulsa CUCHILLO</div></div><div class="tagline">UNA NOCHE SIN PARADERO</div><div class="peru"><i class="flag"></i>HISTORIA DE TOMÁS · LIMA, PERÚ</div></div>
+<div class="screen gameover" id="endScreen" style="display:none"><div class="card"><div class="eyebrow" style="justify-content:center">El tren sigue avanzando</div><h1>FIN DEL<br><span class="title-red">VIAJE</span></h1><p class="desc" id="resultText">Tomás resistió.</p><div class="meta"><span id="finalKills">00 INFECTADOS</span><span id="finalTime">00:00</span></div><button class="start" id="retryBtn">VOLVER A INTENTAR&nbsp; ↻</button></div></div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x171815);scene.fog=new THREE.Fog(0x171815,18,62);
+const camera=new THREE.PerspectiveCamera(73,innerWidth/innerHeight,.08,100);camera.position.set(0,1.62,5);camera.rotation.order='YXZ';
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.4));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;document.body.appendChild(renderer.domElement);
+const mat=(color,rough=.8,metal=0)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});
+const mats={floor:mat(0x292925),wall:mat(0x45453d),trim:mat(0x786e5b,.55),seat:mat(0x45433a),dark:mat(0x171817),metal:mat(0x89857a,.35,.72),glass:new THREE.MeshStandardMaterial({color:0x101a1c,roughness:.2,metalness:.4,emissive:0x11232a,emissiveIntensity:.3}),blood:mat(0x701d17),coat:mat(0x34362f),skin:mat(0x87806b),eye:new THREE.MeshStandardMaterial({color:0xffa474,emissive:0xe7462f,emissiveIntensity:2}),warm:new THREE.MeshStandardMaterial({color:0xffba57,emissive:0xff681d,emissiveIntensity:2.4}),soulCore:new THREE.MeshStandardMaterial({color:0xfff0a3,emissive:0xff832e,emissiveIntensity:4}),zcloth:mat(0x46443d),zskin:mat(0x7d7868),knife:mat(0xaaa99c,.18,.88)};
+scene.add(new THREE.HemisphereLight(0x86909a,0x211c14,1.35));const ambient=new THREE.AmbientLight(0xffd5a0,.18);scene.add(ambient);
+const key=new THREE.PointLight(0xffbd78,38,19,1.7);key.position.set(0,3.8,1);scene.add(key);
+const rear=new THREE.PointLight(0x8c4334,18,18);rear.position.set(0,2.7,-18);scene.add(rear);
+function box(parent,w,h,d,material,x,y,z,cast=false,receive=true){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=cast;m.receiveShadow=receive;parent.add(m);return m}
+function cyl(parent,r1,r2,h,material,x,y,z,seg=10){let m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg),material);m.position.set(x,y,z);parent.add(m);return m}
+// Train carriage: continuous, narrow, battered and warmly lit.
+box(scene,6.6,.24,100,mats.floor,0,-.15,-29,false,true);box(scene,6.6,.18,100,mats.dark,0,3.65,-29);box(scene,.2,3.8,100,mats.wall,-3.18,1.7,-29);box(scene,.2,3.8,100,mats.wall,3.18,1.7,-29);
+for(let side of [-1,1]){
+  box(scene,.16,.3,100,mats.trim,side*3.04,3.27,-29);box(scene,.18,.12,100,mats.trim,side*3.04,.02,-29);
+  for(let z=-67;z<12;z+=8){box(scene,.055,1.1,3.8,mats.metal,side*3.055,2.33,z);const win=box(scene,.035,.92,3.48,mats.glass,side*3.01,2.34,z);}
+  for(let z=-65;z<14;z+=8){box(scene,1.0,.62,3.9,mats.seat,side*2.35,.72,z,true);box(scene,1.0,.11,3.9,mats.trim,side*2.35,1.06,z,true);box(scene,.95,.1,3.7,mats.dark,side*2.35,.38,z);}
+}
+for(let z=-70;z<17;z+=6){box(scene,.28,.05,5.3,mats.trim,0,-.02,z);}
+// Overhead light housings, glowing tubes.
+for(let z=-66;z<12;z+=9){box(scene,1.05,.11,1.8,mats.trim,0,3.38,z);const lamp=new THREE.Mesh(new THREE.BoxGeometry(.78,.035,1.48),new THREE.MeshBasicMaterial({color:0xffcf8a}));lamp.position.set(0,3.3,z);scene.add(lamp);const L=new THREE.PointLight(0xffc882,35,12,2);L.position.set(0,3.03,z);scene.add(L);}
+// a cold dark end of carriage and subtly bolted details
+box(scene,6.1,3.6,.18,mats.dark,0,1.7,-78);for(let x of [-2.7,2.7])for(let z=-73;z<10;z+=4)for(let y of [.22,3.15]){const riv=cyl(scene,.035,.035,.035,mats.metal,x,y,z,6);riv.rotation.x=Math.PI/2;}
+// Station signs and scuffed red panels add readable scene landmarks.
+for(let z of [-8,-32,-56]){box(scene,.025,.42,2.1,mat(0x692c25),-2.99,2.93,z);box(scene,.035,.035,1.8,mats.trim,-2.96,2.94,z);}
+
+// Hero knife in the right foreground, attached to camera space.
+const handRig=new THREE.Group();camera.add(handRig);handRig.position.set(.42,-.38,-.72);handRig.rotation.set(-.12,-.15,.1);
+const forearm=cyl(handRig,.105,.14,.53,mat(0x8d674c),0,-.02,.08,12);forearm.rotation.x=Math.PI/2.6;forearm.position.set(.02,-.16,.22);
+const sleeve=cyl(handRig,.14,.13,.24,mat(0x31352f),0,-.03,.12,12);sleeve.rotation.x=Math.PI/2.5;sleeve.position.set(.01,-.1,.07);
+const grip=cyl(handRig,.046,.048,.3,mat(0x282522),0,-.09,-.18,9);grip.rotation.x=Math.PI/2;
+const guard=box(handRig,.22,.035,.055,mats.metal,0,-.09,-.34);
+const bladeShape=new THREE.Shape();bladeShape.moveTo(-.07,0);bladeShape.lineTo(.07,0);bladeShape.lineTo(.052,-.68);bladeShape.lineTo(0,-.88);bladeShape.lineTo(-.052,-.68);bladeShape.lineTo(-.07,0);
+const bladeMesh=new THREE.Mesh(new THREE.ExtrudeGeometry(bladeShape,{depth:.025,bevelEnabled:true,bevelSegments:1,steps:1,bevelSize:.012,bevelThickness:.01}),mats.knife);bladeMesh.rotation.x=Math.PI;bladeMesh.position.set(0,-.1,-.38);handRig.add(bladeMesh);
+const bloodSpot=new THREE.Mesh(new THREE.SphereGeometry(.027,8,6),mats.blood);bloodSpot.position.set(.01,-.1,-.73);bloodSpot.scale.set(1,.7,.25);handRig.add(bloodSpot);
+
+// Pair of sentient flame spirits orbiting Tomás.
+const souls=[];
+for(let i=0;i<2;i++){
+ const g=new THREE.Group();scene.add(g);const orb=new THREE.Mesh(new THREE.SphereGeometry(.15,14,12),mats.soulCore);g.add(orb);
+ const outer=new THREE.Mesh(new THREE.SphereGeometry(.25,10,8),new THREE.MeshBasicMaterial({color:0xff6929,transparent:true,opacity:.2,side:THREE.BackSide}));g.add(outer);
+ const flame=new THREE.Mesh(new THREE.ConeGeometry(.12,.38,9),mats.warm);flame.position.y=.2;g.add(flame);
+ const light=new THREE.PointLight(0xff762c,3,5);g.add(light);souls.push({group:g,orb,outer,light,flame,offset:i*Math.PI,attack:1.2+i*.9,target:null});
+}
+
+const zombies=[];const particles=[];let running=false,health=100,kills=0,wave=1,elapsed=0,spawnTimer=1.2,attackCooldown=0,damageCooldown=0,knifeSwing=0,shake=0;
+let yaw=0,pitch=0,keys={},last=performance.now(),mouseDown=false;
+const ui={hud:document.querySelector('#hud'),intro:document.querySelector('#intro'),end:document.querySelector('#endScreen'),fill:document.querySelector('#healthFill'),health:document.querySelector('#healthNum'),kills:document.querySelector('#kills'),wave:document.querySelector('#wave'),clock:document.querySelector('#clock'),flash:document.querySelector('#damageFlash'),hit:document.querySelector('#hitmarker'),toast:document.querySelector('#toast'),result:document.querySelector('#resultText')};
+function makeZombie(z,x=0){
+ const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+ const skin=new THREE.MeshStandardMaterial({color:[0x777a67,0x827464,0x62685f,0x867b6d][Math.floor(Math.random()*4)],roughness:.95});
+ const coat=new THREE.MeshStandardMaterial({color:[0x393a35,0x514139,0x373d40,0x524e3d][Math.floor(Math.random()*4)],roughness:.9});
+ const body=box(g,.55,.83,.3,coat,0,1.05,0,true);body.rotation.x=(Math.random()-.5)*.12;
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.23,12,10),skin);head.position.set((Math.random()-.5)*.06,1.65,-.035);head.castShadow=true;g.add(head);
+ const jaw=box(g,.25,.11,.21,skin,0,1.48,-.02,true);jaw.rotation.x=-.16;
+ for(let s of [-1,1]){const eye=new THREE.Mesh(new THREE.SphereGeometry(.035,7,6),mats.eye);eye.position.set(s*.085,1.68,-.235);g.add(eye);
+  const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.085,.56,4,8),skin);arm.position.set(s*.39,1.03,-.01);arm.rotation.z=s*.48;arm.castShadow=true;g.add(arm);
+  const hand=new THREE.Mesh(new THREE.SphereGeometry(.09,8,6),skin);hand.position.set(s*.59,.78,-.03);g.add(hand);
+  const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.105,.47,4,8),coat);leg.position.set(s*.16,.39,0);g.add(leg);
+ }
+ // Torn shoulder strap, dried blood streaks, and uneven posture.
+ const strap=box(g,.09,.72,.035,mats.dark,-.16,1.1,-.17);strap.rotation.z=-.42;
+ for(let j=0;j<3;j++){const smear=box(g,.035,.18+Math.random()*.15,.012,mats.blood,(Math.random()-.5)*.3,1.35-Math.random()*.36,-.166);smear.rotation.z=(Math.random()-.5)*.5;}
+ g.userData={hp:1,phase:Math.random()*6,hit:0,attack:0,speed:.7+Math.random()*.22};zombies.push(g);return g;
+}
+for(let i=0;i<5;i++)makeZombie(-15-i*5,(Math.random()-.5)*3.2);
+function addBlood(pos,amount=9){for(let i=0;i<amount;i++){const m=new THREE.Mesh(new THREE.SphereGeometry(.035+Math.random()*.07,6,5),new THREE.MeshBasicMaterial({color:[0x911d18,0xc33324,0x541915][Math.floor(Math.random()*3)]}));m.position.copy(pos);scene.add(m);particles.push({mesh:m,vel:new THREE.Vector3((Math.random()-.5)*2,Math.random()*2.2,(Math.random()-.5)*1.5),life:.65+Math.random()*.65});}}
+function setToast(text){ui.toast.textContent=text;ui.toast.classList.add('show');setTimeout(()=>ui.toast.classList.remove('show'),1900)}
+function start(){if(running)return;running=true;health=100;kills=0;elapsed=0;wave=1;spawnTimer=1.4;camera.position.set(0,1.62,5);yaw=0;pitch=0;camera.rotation.set(0,0,0,'YXZ');ui.health.textContent='100';ui.fill.style.width='100%';ui.kills.textContent='00';ui.wave.textContent='01';ui.clock.textContent='00:00';ui.intro.style.display='none';ui.end.style.display='none';ui.hud.style.display='block';if(innerWidth>700)renderer.domElement.requestPointerLock?.();setToast('DOS ALMAS TE PROTEGEN');last=performance.now();}
+function endGame(){running=false;document.exitPointerLock?.();ui.hud.style.display='none';ui.end.style.display='flex';ui.result.textContent=`Tomás resistió ${formatTime(elapsed)} y eliminó ${kills} infectados. El tren no se detuvo.`;document.querySelector('#finalKills').textContent=String(kills).padStart(2,'0')+' INFECTADOS';document.querySelector('#finalTime').textContent=formatTime(elapsed);}
+function formatTime(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0')}
+function swing(){if(!running||attackCooldown>0)return;attackCooldown=.48;knifeSwing=.28;handRig.userData.swing=0;
+ let best=null,bestDist=4.8;const dir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);const origin=camera.position.clone();
+ for(const z of zombies){if(z.userData.hp<=0)continue;const p=z.position.clone().add(new THREE.Vector3(0,1.1,0));const delta=p.sub(origin);const dist=delta.length();if(dist<bestDist&&dir.dot(delta.normalize())>.68){best=z;bestDist=dist;}}
+ if(best){best.userData.hp=0;addBlood(best.position.clone().add(new THREE.Vector3(0,1.25,0)),15);scene.remove(best);kills++;ui.kills.textContent=String(kills).padStart(2,'0');ui.hit.classList.add('show');setTimeout(()=>ui.hit.classList.remove('show'),110);if(kills%10===0){health=Math.min(100,health+12);setToast('BOTIQUÍN IMPROVISADO +12');}}
+}
+function hurt(amount){if(damageCooldown>0)return;damageCooldown=.75;health=Math.max(0,health-amount);ui.health.textContent=health;ui.fill.style.width=health+'%';ui.flash.classList.add('active');setTimeout(()=>ui.flash.classList.remove('active'),170);shake=.18;if(health<=0)endGame();}
+document.querySelector('#startBtn').addEventListener('click',start);document.querySelector('#retryBtn').addEventListener('click',()=>{for(const z of zombies)scene.remove(z);zombies.length=0;for(let i=0;i<5;i++)makeZombie(-15-i*5,(Math.random()-.5)*3.2);souls.forEach(s=>s.attack=1);start();});
+window.addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();if(e.code==='Space'&&!e.repeat)swing();});window.addEventListener('keyup',e=>keys[e.code]=false);
+window.addEventListener('mousedown',e=>{if(running&&e.button===0){mouseDown=true;if(document.pointerLockElement)swing();}});window.addEventListener('mouseup',()=>mouseDown=false);
+document.addEventListener('pointerlockchange',()=>{});document.addEventListener('mousemove',e=>{if(running&&document.pointerLockElement){yaw-=e.movementX*.0022;pitch-=e.movementY*.0018;pitch=Math.max(-.55,Math.min(.55,pitch));camera.rotation.set(pitch,yaw,0,'YXZ');}});
+renderer.domElement.addEventListener('click',()=>{if(running&&!document.pointerLockElement&&innerWidth>700)renderer.domElement.requestPointerLock?.();});
+document.querySelector('#attackTouch').addEventListener('pointerdown',e=>{e.preventDefault();swing();});
+// Simple mobile movement pad.
+let stickOn=false,stickVec={x:0,y:0};const stick=document.querySelector('#stick'),nub=document.querySelector('#nub');stick.addEventListener('pointerdown',e=>{stickOn=true;stick.setPointerCapture(e.pointerId);moveStick(e)});stick.addEventListener('pointermove',e=>{if(stickOn)moveStick(e)});stick.addEventListener('pointerup',()=>{stickOn=false;stickVec={x:0,y:0};nub.style.transform='translate(0,0)'});function moveStick(e){const r=stick.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),len=Math.hypot(dx,dy),scale=Math.min(1,48/(len||1));stickVec={x:dx*scale/48,y:dy*scale/48};nub.style.transform=`translate(${dx*scale}px,${dy*scale}px)`;}
+let touchLook=null;renderer.domElement.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'&&e.clientX>innerWidth*.45)touchLook={x:e.clientX,y:e.clientY,id:e.pointerId};});renderer.domElement.addEventListener('pointermove',e=>{if(touchLook&&e.pointerId===touchLook.id){yaw-=(e.clientX-touchLook.x)*.006;pitch-=(e.clientY-touchLook.y)*.005;pitch=Math.max(-.55,Math.min(.55,pitch));camera.rotation.set(pitch,yaw,0,'YXZ');touchLook={x:e.clientX,y:e.clientY,id:e.pointerId};}});renderer.domElement.addEventListener('pointerup',e=>{if(touchLook&&e.pointerId===touchLook.id)touchLook=null;});
+
+const clock=new THREE.Clock();function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-last)/1000);last=now;const t=now*.001;
+ if(running){elapsed+=dt;attackCooldown=Math.max(0,attackCooldown-dt);damageCooldown=Math.max(0,damageCooldown-dt);if(knifeSwing>0){knifeSwing-=dt;const progress=1-knifeSwing/.28;handRig.rotation.z=.1-Math.sin(progress*Math.PI)*.95;handRig.rotation.x=-.12+Math.sin(progress*Math.PI)*.38;}else{handRig.rotation.z=.1+Math.sin(t*7)*.025;handRig.rotation.x=-.12+Math.sin(t*6)*.018;}
+  const forward=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0)-stickVec.y,strafe=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+stickVec.x;const speed=3.35;camera.position.x+=((strafe*Math.cos(yaw)-forward*Math.sin(yaw))*speed)*dt;camera.position.z+=((forward*Math.cos(yaw)+strafe*Math.sin(yaw))*speed)*dt;camera.position.x=THREE.MathUtils.clamp(camera.position.x,-2.05,2.05);camera.position.z=THREE.MathUtils.clamp(camera.position.z,-69,10);camera.position.y=1.62+Math.sin(t*9)*.018;
+  if(shake>0){shake-=dt;camera.position.x+=(Math.random()-.5)*.045;}
+  if(elapsed>0&&Math.floor(elapsed/28)+1!==wave){wave=Math.floor(elapsed/28)+1;ui.wave.textContent=String(wave).padStart(2,'0');setToast('OLEADA '+String(wave).padStart(2,'0')+' — NO TE DETENGAS');}
+  spawnTimer-=dt;if(spawnTimer<=0){makeZombie(Math.max(-53,camera.position.z-17-Math.random()*12),(Math.random()-.5)*4.2);spawnTimer=Math.max(.65,2.5-wave*.11)+Math.random()*.85;}
+  for(let i=zombies.length-1;i>=0;i--){const z=zombies[i];if(z.userData.hp<=0){zombies.splice(i,1);continue;}const dx=camera.position.x-z.position.x,dz=camera.position.z-z.position.z,dist=Math.hypot(dx,dz);z.userData.phase+=dt*6;z.position.x+=dx/(dist||1)*z.userData.speed*dt;z.position.z+=dz/(dist||1)*z.userData.speed*dt;z.rotation.y=Math.atan2(dx,dz);z.position.y=Math.abs(Math.sin(z.userData.phase))*.025;
+   if(dist<1.38){z.userData.attack+=dt;if(z.userData.attack>.95){z.userData.attack=0;hurt(9+Math.min(7,wave));}}
+  }
+  for(const s of souls){s.group.position.set(camera.position.x+Math.sin(t*1.35+s.offset)*.82,1.88+Math.sin(t*2.4+s.offset)*.16,camera.position.z-1.25+Math.cos(t*1.35+s.offset)*.55);s.group.rotation.y=t*1.7+s.offset;s.flame.rotation.z=Math.sin(t*7+s.offset)*.2;s.attack-=dt;if(s.attack<=0){s.attack=2.3+Math.random()*.8;let target=null,nearest=10;for(const z of zombies){const d=z.position.distanceTo(s.group.position);if(z.userData.hp>0&&d<nearest){nearest=d;target=z;}}if(target){target.userData.hp=0;addBlood(target.position.clone().add(new THREE.Vector3(0,1.2,0)),10);scene.remove(target);kills++;ui.kills.textContent=String(kills).padStart(2,'0');const bolt=new THREE.Mesh(new THREE.SphereGeometry(.065,8,8),mats.soulCore);bolt.position.copy(s.group.position);scene.add(bolt);particles.push({mesh:bolt,life:.25,bolt:true,target:target.position.clone().add(new THREE.Vector3(0,1.2,0))});}}
+  }
+  for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.life-=dt;if(p.bolt){const delta=p.target.clone().sub(p.mesh.position);p.mesh.position.add(delta.multiplyScalar(Math.min(1,dt*11)));}else{p.vel.y-=4.8*dt;p.mesh.position.addScaledVector(p.vel,dt);p.mesh.scale.multiplyScalar(.985);}if(p.life<=0){scene.remove(p.mesh);particles.splice(i,1);}}
+  ui.clock.textContent=formatTime(elapsed);
+ }
+ key.intensity=34+Math.sin(t*9)*2;for(let i=0;i<souls.length;i++)souls[i].light.intensity=2.6+Math.sin(t*8+i)*.7;
+ renderer.render(scene,camera);
+}
+requestAnimationFrame(animate);
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+</script>
+</body>
+</html>
